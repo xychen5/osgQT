@@ -1,16 +1,49 @@
-### Introduction
+# osgQt
+本项目从[https://github.com/openscenegraph/osgQt](https://github.com/openscenegraph/osgQt)做了简单修改而来
+最好从以静态库生成
 
-Welcome to the OpenSceneGraph Qt (osgQT).
+## 1 其调用参考
+[https://xychen5.github.io/2021/06/06/osgQT/](https://xychen5.github.io/2021/06/06/osgQT/)
 
-This is a Qt project for making use of OpenSceneGraph(OSG)
+## 2 依赖如下
+```sh
+# include
+F:\prjs\editBBox\osgQt\build\src\osgQOpenGL;
+F:\prjs\editBBox\osgQt\src\osgQOpenGL;
+F:\BASE_ENV\OSG\OpenSceneGraph-3.6.5-VC2019-64-Release\include;
+F:\prjs\editBBox\osgQt\include;
+F:\prjs\editBBox\osgQt\build\src;
+F:\prjs\editBBox\osgQt\build\include;
+F:\BASE_ENV\QT\5.12.10\msvc2015_64\include;
+F:\BASE_ENV\QT\5.12.10\msvc2015_64\include\QtWidgets;
+F:\BASE_ENV\QT\5.12.10\msvc2015_64\include\QtGui;
+F:\BASE_ENV\QT\5.12.10\msvc2015_64\include\QtANGLE;
+F:\BASE_ENV\QT\5.12.10\msvc2015_64\include\QtCore;
+F:\BASE_ENV\QT\5.12.10\msvc2015_64\.\mkspecs\win32-msvc;
+F:\BASE_ENV\QT\5.12.10\msvc2015_64\include\QtOpenGL;
+%(AdditionalIncludeDirectories)
 
-OSG is required for making use of this project, For up-to-date information on 
-the OSG project, in-depth details on how to compile and run libraries and examples, 
-see the documentation on the OpenSceneGraph website:
 
-    http://www.openscenegraph.org/index.php/documentation
-
-
-Known issues:
-* This project was forked from the original OSG implementation and needs lots of tidy up
-# osgQT
+# lib
+F:\BASE_ENV\QT\5.12.10\msvc2015_64\lib\Qt5OpenGL.lib
+F:\BASE_ENV\OSG\OpenSceneGraph-3.6.5-VC2019-64-Release\lib\osg.lib
+F:\BASE_ENV\OSG\OpenSceneGraph-3.6.5-VC2019-64-Release\lib\osgUtil.lib
+F:\BASE_ENV\OSG\OpenSceneGraph-3.6.5-VC2019-64-Release\lib\osgViewer.lib
+F:\BASE_ENV\OSG\OpenSceneGraph-3.6.5-VC2019-64-Release\lib\osgGA.lib
+F:\BASE_ENV\OSG\OpenSceneGraph-3.6.5-VC2019-64-Release\lib\osgDB.lib
+F:\BASE_ENV\OSG\OpenSceneGraph-3.6.5-VC2019-64-Release\lib\OpenThreads.lib
+opengl32.lib
+F:\BASE_ENV\QT\5.12.10\msvc2015_64\lib\Qt5Widgets.lib
+F:\BASE_ENV\QT\5.12.10\msvc2015_64\lib\Qt5Gui.lib
+F:\BASE_ENV\QT\5.12.10\msvc2015_64\lib\Qt5Core.lib
+kernel32.lib
+user32.lib
+gdi32.lib
+winspool.lib
+shell32.lib
+ole32.lib
+oleaut32.lib
+uuid.lib
+comdlg32.lib
+advapi32.lib
+```
