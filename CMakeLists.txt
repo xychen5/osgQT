@@ -423,6 +423,11 @@ INCLUDE(OsgMacroUtils)
 # via cmake -DDESIRED_QT_VERSION=5
 # QUIET option disables messages if the package cannot be found.
 
+# set(Qt5_DIR "*PATH TO YOUR QT QT5CONFIG FILE HERE*" CACHE PATH "Initial cahe" FORCE)
+set(CMAKE_PREFIX_PATH "F:/BASE_ENV/QT/5.12.10/msvc2015_64")
+set(Qt5_DIR "${CMAKE_PREFIX_PATH}/lib/cmake/Qt5")
+set(Qt5Widgets_DIR "${CMAKE_PREFIX_PATH}/lib/cmake/Qt5Widgets")
+set(Qt5Network_DIR "${CMAKE_PREFIX_PATH}/lib/cmake/Qt5OpenGL")
 FIND_PACKAGE(Qt5 COMPONENTS Widgets OpenGL REQUIRED)
 
 

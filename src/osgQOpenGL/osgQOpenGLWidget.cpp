@@ -12,6 +12,8 @@
 #include <QScreen>
 #include <QWindow>
 
+#include <iostream>
+
 osgQOpenGLWidget::osgQOpenGLWidget(QWidget* parent)
     : QOpenGLWidget(parent)
 {
@@ -45,6 +47,7 @@ void osgQOpenGLWidget::initializeGL()
     // Initializes OpenGL function resolution for the current context.
     initializeOpenGLFunctions();
     createRenderer();
+    std::cout << "gl initialized!" << std::endl;
     emit initialized();
 }
 
@@ -221,3 +224,44 @@ void osgQOpenGLWidget::createRenderer()
                       qApp->screens().front();
     m_renderer->setupOSG(width(), height(), screen->devicePixelRatio());
 }
+
+// void osgQOpenGLWidget::changeEvent(QEvent * event)
+// {
+// 	std::cout << "windows size changed to (w,h): " << width() << "," << height() << std::endl;
+//     resizeGL(width(), height());
+//     //camera = new osg::Camera;
+//     osg::ref_ptr<osg::Camera> camera = this->getOsgViewer()->getCamera();
+// 
+//     // Assign Graphics Context to the Camera
+//     // camera->setGraphicsContext(gc);
+//     osg::ref_ptr<osg::GraphicsContext> widgetGC = this->getOsgViewer()->getCamera()->getGraphicsContext();
+//     camera->setGraphicsContext(widgetGC);
+// 
+//     // Set the viewport for the Camera
+//     int h = height();
+//     int w = width();
+//     // camera->setViewport(new osg::Viewport(0, 0, traits->width, traits->height));
+//     camera->setViewport(new osg::Viewport(0, 0, w, h));
+// 
+//     // Set projection matrix and camera attribtues
+//     camera->setClearMask(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
+//     camera->setClearColor(osg::Vec4f(0.2f, 0.2f, 0.4f, 1.0f));
+//     camera->setProjectionMatrixAsPerspective(
+//         30.0f, static_cast<double>(w) / static_cast<double>(h), 1.0, 1000.0);
+//     std::cout << "reset the camera!" << std::endl;
+//     // Add the Camera to the Viewer
+//     this->getOsgViewer()->setCamera(camera.get());
+// }
+
+// void osgQOpenGLWidget::resizeEvent(QResizeEvent* event) {
+//     if (this->windowState() == Qt::WindowMaximized) {
+//         std::cout << "maxed!" << std::endl;
+//         resize(this->width(), this->height());
+//         resizeGL(this->width(), this->height());
+//     }
+// 
+//     std::cout << "resize event raised!" << std::endl;
+//     resize(this->width(), this->height());
+// 
+// }
+

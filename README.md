@@ -13,3 +13,4 @@ see the documentation on the OpenSceneGraph website:
 
 Known issues:
 * This project was forked from the original OSG implementation and needs lots of tidy up
+# osgQT

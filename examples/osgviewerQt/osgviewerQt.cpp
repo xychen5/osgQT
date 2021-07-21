@@ -17,6 +17,7 @@
 
 #include <osg/Switch>
 #include <osg/Types>
+#include <osgViewer/Viewer>
 #include <osgText/Text>
 
 #include <osgViewer/Viewer>
@@ -41,7 +42,6 @@
 
 int main( int argc, char** argv )
 {
-
 
     QSurfaceFormat format = QSurfaceFormat::defaultFormat();
 
@@ -81,13 +81,119 @@ int main( int argc, char** argv )
     arguments.getApplicationUsage()->addCommandLineOption("--login <url> <username> <password>",
                                                           "Provide authentication information for http file access.");
     arguments.getApplicationUsage()->addCommandLineOption("-p <filename>",
-                                                          "Play specified camera path animation file, previously saved with 'z' key.");
+                                                          "Play specified camera path animation file, previously saved with 'z' key.", 
+                                                          "F:/dataSets/OpenSceneGraph-Data-3.4.0/OpenSceneGraph-Data/glider.osg");
     arguments.getApplicationUsage()->addCommandLineOption("--speed <factor>",
                                                           "Speed factor for animation playing (1 == normal speed).");
     arguments.getApplicationUsage()->addCommandLineOption("--device <device-name>",
                                                           "add named device to the viewer");
 
     osgQOpenGLWidget widget(&arguments);
+
+    if (true) {
+
+        osg::ref_ptr<osg::Node> loadedModel = osgDB::readNodeFile("F:/dataSets/OpenSceneGraph-Data-3.4.0/OpenSceneGraph-Data/glider.osg");
+
+        if (!loadedModel)
+        {
+            std::cout << arguments.getApplicationName() << ": No data loaded" << std::endl;
+            return 1;
+        }
+
+        // any option left unread are converted into errors to write out later.
+        arguments.reportRemainingOptionsAsUnrecognized();
+
+        // report any errors if they have occurred when parsing the program arguments.
+        if (arguments.errors())
+        {
+            arguments.writeErrorMessages(std::cout);
+            return 1;
+        }
+
+        // QObject::connect(&widget, &osgQOpenGLWidget::initialized, [&arguments, &widget]() {
+        //     return 0;
+        //     });
+
+        widget.show();
+
+        // std::cout << "children's num is: " << widget.getOsgViewer()->getCamera()->getNumChildren();
+        // widget.getOsgViewer()->setSceneData(loadedModel);
+        // std::cout << "children's num is: " << widget.getOsgViewer()->getCamera()->getNumChildren();
+
+        // return app.exec();
+
+
+        // optimize the scene graph, remove redundant nodes and state etc.
+        osgUtil::Optimizer optimizer;
+        optimizer.optimize(loadedModel);
+
+        // widget.getOsgViewer()->setSceneData(loadedModel);
+        // std::cout << "children's num is: " << widget.getOsgViewer()->getCamera()->getNumChildren();
+
+        // mViewer = new osgViewer::Viewer();
+        osg::ref_ptr<osgViewer::Viewer> mViewer = widget.getOsgViewer();
+        // Add a Stats Handler to the viewer
+        // mViewer->addEventHandler(new osgViewer::StatsHandler);
+
+//        // // Get the current window size
+//        // ::GetWindowRect(m_hWnd, &rect);
+//
+//        // Init the GraphicsContext Traits
+//        osg::ref_ptr<osg::GraphicsContext::Traits> traits = new osg::GraphicsContext::Traits;
+//
+//        // Setup the traits parameters
+//        osg::DisplaySettings* ds = osg::DisplaySettings::instance().get();
+//        traits->windowName = "editBBox";
+//        traits->windowDecoration = false;
+//        traits->x = 1000;                                  // window origin
+//        traits->y = 1000;
+//        traits->width = 1000;  // window size
+//        traits->height = 1000;
+//        traits->doubleBuffer = true;
+//        traits->alpha = ds->getMinimumNumAlphaBits();
+//        traits->stencil = ds->getMinimumNumStencilBits();
+//        traits->sampleBuffers = ds->getMultiSamples();
+//        traits->samples = ds->getNumMultiSamples();
+//
+//        // Create the Graphics Context
+//        osg::GraphicsContext* gc = osg::GraphicsContext::createGraphicsContext(traits.get());
+//
+//        // Init a new Camera (Master for this View)
+//        //camera = new osg::Camera;
+		osg::ref_ptr<osg::Camera> camera = mViewer->getCamera();
+
+//        // Assign Graphics Context to the Camera
+//        // camera->setGraphicsContext(gc);
+//        osg::ref_ptr<osg::GraphicsContext> widgetGC = widget.getOsgViewer()->getCamera()->getGraphicsContext();
+//        camera->setGraphicsContext(widgetGC);
+//
+//        // Set the viewport for the Camera
+//        int h = widget.sizeHint().height();
+//        int w = widget.sizeHint().width();
+//        // camera->setViewport(new osg::Viewport(0, 0, traits->width, traits->height));
+//        camera->setViewport(new osg::Viewport(0, 0, w, h));
+//
+//        // Set projection matrix and camera attribtues
+        camera->setClearMask(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
+        camera->setClearColor(osg::Vec4f(0.2f, 0.2f, 0.4f, 1.0f));
+        // camera->setProjectionMatrixAsPerspective(
+        //     30.0f, static_cast<double>(w) / static_cast<double>(h), 1.0, 1000.0);
+//
+        // Add the Camera to the Viewer
+        mViewer->setCamera(camera.get());
+
+        // Add the Camera Manipulator to the Viewer
+        // mViewer->setCameraManipulator(keyswitchManipulator.get());
+        osg::ref_ptr<osgGA::TrackballManipulator> trackball = new osgGA::TrackballManipulator();
+        mViewer->setCameraManipulator(trackball.get());
+
+        mViewer->setSceneData(loadedModel);
+
+        // // Realize the Viewer's graphics context, which already done in the default pWidget
+        // mViewer->realize(); 
+
+        return app.exec();
+    }
 
     QObject::connect(&widget, &osgQOpenGLWidget::initialized,   [  &arguments,
                                                                    &widget ]
@@ -114,28 +220,6 @@ int main( int argc, char** argv )
             return 1;
         }
 
-        std::string url, username, password;
-
-        while(arguments.read("--login", url, username, password))
-        {
-            osgDB::Registry::instance()->getOrCreateAuthenticationMap()->addAuthenticationDetails(
-                url,
-                new osgDB::AuthenticationDetails(username, password)
-            );
-        }
-
-        std::string device;
-
-        while(arguments.read("--device", device))
-        {
-            osg::ref_ptr<osgGA::Device> dev = osgDB::readRefFile<osgGA::Device>(device);
-
-            if(dev.valid())
-            {
-                widget.getOsgViewer()->addDevice(dev);
-            }
-        }
-
         // set up the camera manipulators.
         {
             osg::ref_ptr<osgGA::KeySwitchMatrixManipulator> keyswitchManipulator = new osgGA::KeySwitchMatrixManipulator;
@@ -148,6 +232,7 @@ int main( int argc, char** argv )
             keyswitchManipulator->addMatrixManipulator('6', "FirstPerson", new osgGA::FirstPersonManipulator());
             keyswitchManipulator->addMatrixManipulator('7', "Spherical", new osgGA::SphericalManipulator());
 
+            // std::string pathfile = "F:/dataSets/OpenSceneGraph-Data-3.4.0/OpenSceneGraph-Data/glider.osg";
             std::string pathfile;
             double animationSpeed = 1.0;
 
@@ -199,6 +284,7 @@ int main( int argc, char** argv )
 
         // load the data
         osg::ref_ptr<osg::Node> loadedModel = osgDB::readRefNodeFiles(arguments);
+        // osg::ref_ptr<osg::Node> loadedModel = osgDB::readNodeFile("F:/dataSets/OpenSceneGraph-Data-3.4.0/OpenSceneGraph-Data/glider.osg");
 
         if(!loadedModel)
         {
@@ -222,8 +308,9 @@ int main( int argc, char** argv )
         optimizer.optimize(loadedModel);
 
         widget.getOsgViewer()->setSceneData(loadedModel);
+        std::cout << "children's num is: " << widget.getOsgViewer()->getCamera()->getNumChildren();
 
-        //        widget.getOsgViewer()->realize();
+        // widget.getOsgViewer()->realize();
 
         return 0;
     });
