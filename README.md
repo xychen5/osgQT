@@ -4,6 +4,7 @@
 
 ## 1 其调用参考
 [https://xychen5.github.io/2021/06/06/osgQT/](https://xychen5.github.io/2021/06/06/osgQT/)
+本项目root目录下，有osgQTDemo这个样例，可以参考该项目的具体代码
 
 ## 2 依赖如下
 ```sh

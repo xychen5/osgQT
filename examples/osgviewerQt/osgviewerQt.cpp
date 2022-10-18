@@ -38,6 +38,8 @@
 #include <QSurfaceFormat>
 
 #include <iostream>
+#include <thread>
+#include <stdlib.h>
 
 
 int main( int argc, char** argv )
@@ -181,6 +183,29 @@ int main( int argc, char** argv )
 //
         // Add the Camera to the Viewer
         mViewer->setCamera(camera.get());
+        // output camera config to see the diff
+        auto printFunc = [&]() {
+            for (int i = 0; i < 100000; ++i) {
+                Sleep(1000);
+                auto viewPort = camera->getViewport();
+                std::cout << ">>> viewPort is >>>> x/y/w/h" << viewPort->x() << " " <<
+                 viewPort->y() << viewPort->width() << viewPort->height() << std::endl;
+                // bool getProjectionMatrixAsOrtho(double &left, double &right, double &bottom, double &top, double &zNear, double &zFar)
+                double left, right, bottom, top, zNear, zFar;
+                camera->getProjectionMatrixAsFrustum(left, right, bottom, top, zNear, zFar);
+
+                std::cout << ">>> projection matrix is >>>> left, right, bottom, top, zNear, zFar: " <<
+                    left << " " << right << " " <<  bottom << " " <<  top << " " <<  zNear << " " << zFar << std::endl;
+                
+                double fovy, aspectRatio;
+                camera->getProjectionMatrixAsPerspective(fovy, aspectRatio, zNear, zFar);
+                std::cout << ">>> perspective is >>>> fovy, aspectRatio, zNear, zFar " <<
+                    fovy << " " << aspectRatio << " " <<  zNear << " " << zFar << std::endl;
+                
+            }
+        };
+
+        std::thread dbThread(printFunc);
 
         // Add the Camera Manipulator to the Viewer
         // mViewer->setCameraManipulator(keyswitchManipulator.get());
@@ -191,8 +216,9 @@ int main( int argc, char** argv )
 
         // // Realize the Viewer's graphics context, which already done in the default pWidget
         // mViewer->realize(); 
-
-        return app.exec();
+        app.exec();
+        dbThread.join();
+        return 0;
     }
 
     // QObject::connect(&widget, &osgQOpenGLWidget::initialized,   [  &arguments,
